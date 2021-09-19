@@ -4,6 +4,7 @@ Represents a round of the game, storing things like word, time, skips, drawing p
 
 import time as t
 from _thread import *
+import threading
 from .game import Game
 from .chat import Chat
 
@@ -23,7 +24,7 @@ class Round(object):
         self.player_scores = {player:0 for player in players}
         self.time = 75
         self.chat = Chat(self)
-        start_new_thread(self.time_thread, ())
+        threading.Timer(1, self.time_thread())
 
     def skip(self):
         """
@@ -51,10 +52,9 @@ class Round(object):
         Runs in thread to track time
         :return: None
         """
-        while self.time > 0:
-            t.sleep(1)
-            self.time -=1
-        self.end_round("Time's Up")
+        self.time -= 1
+        if self.time <= 0:
+            self.end_round("Time's Up")
 
     def guess(self, player, wrd):
         """
@@ -86,5 +86,4 @@ class Round(object):
             self.end_round("Player Disconnected")
 
     def end_round(self, msg):
-        # TODO implement end round functionality
-        pass
+        self.game.round_ended()
