@@ -121,5 +121,5 @@ class Game(object):
 
             self.words_used.add(wrd)
 
-            r = random.randint(0, len(words))
+            r = random.randint(0, len(words)-1)
             return words[r].strip()
