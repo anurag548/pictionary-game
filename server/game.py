@@ -1,6 +1,7 @@
 """
 Handles operations related to game and connections between, player, board, chat and round
 """
+
 from .player import Player
 from .round import Round
 from .board import Board
@@ -20,8 +21,8 @@ class Game(object):
         self.words_used = set()
         self.round = None
         self.board = Board()
-        self.connected_thread = None
         self.player_draw_ind = 0
+        self.round_cnt = 1
         self.start_new_round()
 
     def start_new_round(self):
@@ -32,6 +33,7 @@ class Game(object):
         round_word = self.get_word()
         self.round = Round(round_word, self.players[self.player_draw_ind], self.players, self)
         self.player_draw_ind += 1
+        self.round_cnt += 1
 
         if self.player_draw_ind >= len(self.players):
             self.end_round()
@@ -64,6 +66,14 @@ class Game(object):
 
         if len(self.players) <= 2:
             self.end_game()
+
+    def get_player_scores(self):
+        """
+        dict of a player scores
+        :return: above desc dict
+        """
+        scores = {player: player.get_score() for player in self.players}
+        return scores
 
     def skip(self):
         """

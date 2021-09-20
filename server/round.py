@@ -10,7 +10,7 @@ from .chat import Chat
 
 
 class Round(object):
-    def __init__(self, word, player_drawing, players):
+    def __init__(self, word, player_drawing, players, game):
         """
         init object
         :param word: str
@@ -23,15 +23,16 @@ class Round(object):
         self.skips = 0
         self.player_scores = {player:0 for player in players}
         self.time = 75
+        self.game = game
         self.chat = Chat(self)
-        threading.Timer(1, self.time_thread())
+        start_new_thread(self.time_thread, ())
 
     def skip(self):
         """
         Returns true if round is skipped threshold met
         :return: bool
         """
-        self.skips +=1
+        self.skips += 1
         if self.skips > len(self.players)-2:
             return True
         return False
@@ -86,4 +87,6 @@ class Round(object):
             self.end_round("Player Disconnected")
 
     def end_round(self, msg):
+        for player in self.players:
+            player.update_score(self.player_scores[player])
         self.game.round_ended()
