@@ -1,7 +1,6 @@
 """
 Represents and stores information about chat
 """
-from .round import Round
 
 
 class Chat(object):

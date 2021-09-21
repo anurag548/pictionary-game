@@ -1,7 +1,6 @@
 """
 Represents a player object on the server side
 """
-from .game import Game
 
 
 class Player(object):

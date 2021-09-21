@@ -1,16 +1,35 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import socket
+import json
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+class Network:
+    def __init__(self, name):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server = "localhost"
+        self.port = 5556
+        self.addr = (self.server, self.port)
+        self.name = name
+        self.connect()
+
+    def connect(self):
+        try:
+            self.client.connect(self.addr)
+            self.client.sendall(self.name.encode())
+            return json.loads(self.client.recv(2048))
+        except Exception as e:
+            self.disconnect(e)
+
+    def send(self, data):
+        try:
+            self.client.send(json.dumps(data).encode())
+            return json.loads(self.client.recv(2048).decode())
+        except socket.error as e:
+            self.disconnect(e)
+
+    def disconnect(self, msg):
+        print("[EXCEPTION] disconnected fromm the server", msg)
+        self.client.close()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+n = Network("Testing Pictionary")
+print(n.send({0: []}))

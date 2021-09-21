@@ -5,13 +5,13 @@ Handles the request of the connection, creating new games and request from the c
 import socket
 import threading
 import time
-from .player import Player
-from .game import Game
+from player import Player
+from game import Game
 import json
 
 
 class Server(object):
-    PLAYERS = 8
+    PLAYERS = 1
 
     def __init__(self):
         self.connection_queue = []
@@ -26,17 +26,19 @@ class Server(object):
         """
         while True:
             try:
-
                 # recv req
-                data = conn.recv(1024)
-                data = json.loads(data)
-
+                try:
+                    data = conn.recv(1024)
+                    data = json.loads(data.decode())
+                    print("[LOG] Received data", data)
+                except:
+                    break
                 # Player is not a part of game
-                keys = [key for key in data.keys()]
-                send_msg = {key: [] for key in keys}
+                keys = data.keys()
+                send_msg = {int(key): [] for key in keys}
 
                 for key in keys:
-                    if key == -1: # get game, returns players[]
+                    if key == -1:  # get game, returns players[]
                         if player.game:
                             send_msg[-1] = player.game_id.players
                         else:
@@ -77,19 +79,21 @@ class Server(object):
 
                         elif key == 8:  # update board
                             x, y, color = data[8][:3]
-                            self.game.update_board(x, y, color)
+                            player.game.update_board(x, y, color)
 
                         elif key == 9:  # get round time
-                            t = self.game.round.time
+                            t = player.game.round.time
                             send_msg[9] = t
 
-                        else:
-                            raise Exception("Not a valid key")
-
-                conn.sendall(json.dumps(send_msg))
+                send_msg = json.dumps(send_msg)
+                conn.sendall(send_msg.encode())
 
             except Exception as e:
                 print(f"[EXCEPTION] {player.get_name()} disconnected:", e)
+                break
+                # TODO call player game disconnect method
+        print(F"[DISCONNECT] {player.name} DISCONNECTED")
+        conn.close()
 
     def handle_queue(self, player):
         """
@@ -98,13 +102,12 @@ class Server(object):
         :return:
         """
         self.connection_queue.append(player)
-        if len(self.connection_queue) >= 8:
-            game = Game(self.connection_queue[:],self.game_id)
+        if len(self.connection_queue) >= self.PLAYERS:
+            game = Game(self.game_id, self.connection_queue[:])
             self.game_id += 1
 
             for p in self.connection_queue:
                 p.set_game(game)
-
             self.game_id += 1
             self.connection_queue = []
 
@@ -115,7 +118,7 @@ class Server(object):
         :return: None
         """
         try:
-            data = conn.recv(16)
+            data = conn.recv(1024)
             name = str(data.decode())
             if not name:
                 raise Exception("No name received")
@@ -123,14 +126,15 @@ class Server(object):
             conn.sendall("1".encode())
             player = Player(addr, name)
             self.handle_queue(player)
-            threading.Thread(target=self.player_thread, args=(conn, player))
+            thread = threading.Thread(target=self.player_thread, args=(conn, player))
+            thread.start()
         except Exception as e:
             print("[EXCEPTION]", e)
             conn.close()
 
     def connection_thread(self):
-        server = ""
-        port = 5555
+        server = "localhost"
+        port = 5556
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -139,16 +143,17 @@ class Server(object):
         except socket.error as e:
             str(e)
 
-        s.listen()
+        s.listen(1)
         print("Waiting for a connection, Server Started")
 
         while True:
             conn, addr = s.accept()
             print("[CONNECT] New Connection!")
 
-            self.authentication(addr)
+            self.authentication(conn, addr)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     s = Server()
-    threading.Thread(target=s.connection_thread())
+    thread = threading.Thread(target=s.connection_thread)
+    thread.start()

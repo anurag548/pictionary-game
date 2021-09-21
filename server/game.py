@@ -1,10 +1,8 @@
 """
 Handles operations related to game and connections between, player, board, chat and round
 """
-
-from .player import Player
-from .round import Round
-from .board import Board
+from round import Round
+from board import Board
 import random
 
 
