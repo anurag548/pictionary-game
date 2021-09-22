@@ -22,7 +22,13 @@ class Network:
     def send(self, data):
         try:
             self.client.send(json.dumps(data).encode())
-            return json.loads(self.client.recv(2048).decode())
+            di = ""
+            last = 1
+            while last:
+                last = self.client.recv(1024).decode()
+                di += last
+            print(di)
+            return json.loads(self.client.recv(2000000).decode())
         except socket.error as e:
             self.disconnect(e)
 
@@ -31,5 +37,5 @@ class Network:
         self.client.close()
 
 
-n = Network("Testing Pictionary")
-print(n.send({0: []}))
+n = Network("Player One")
+print(n.send({3: []}))
