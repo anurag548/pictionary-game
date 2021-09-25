@@ -4,7 +4,6 @@ Handles the request of the connection, creating new games and request from the c
 """
 import socket
 import threading
-import time
 from player import Player
 from game import Game
 import json
@@ -31,7 +30,7 @@ class Server(object):
                     data = conn.recv(1024)
                     data = json.loads(data.decode())
                     print("[LOG] Received data", data)
-                except:
+                except Exception as e:
                     break
                 # Player is not a part of game
                 keys = [int(key) for key in data.keys()]
@@ -85,9 +84,10 @@ class Server(object):
                         elif key == 9:  # get round time
                             t = player.game.round.time
                             send_msg[9] = t
+                            print(send_msg)
 
                 send_msg = json.dumps(send_msg)
-                conn.sendall(send_msg.encode())
+                conn.sendall(send_msg.encode() + ".".encode())
 
             except Exception as e:
                 print(f"[EXCEPTION] {player.get_name()} disconnected:", e)
