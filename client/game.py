@@ -2,25 +2,25 @@ import pygame
 from button import Button, TextButton
 from board import Board
 from top_bar import TopBar
-from main_menu import MainMenu
 from leaderboard import Leaderboard
 from player import Player
 from bottom_bar import BottomBar
 from chat import Chat
+from network import Network
 
 
 class Game:
     BG = (255, 255, 255)
 
-    def __init__(self):
-        self.WIDTH = 1300
-        self.HEIGHT = 1000
-        self.win = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+    def __init__(self, win, connection = None):
+        pygame.font.init()
+        self.connection = connection
+        self.win = win
         self.leaderboard = Leaderboard(50, 125)
         self.board = Board(308, 125)
         self.top_bar = TopBar(10, 10, 90, 1280)
         self.top_bar.change_round(1)
-        self.players = [Player("Test1"), Player("Test2"), Player("Randi"), Player("Tiwari")]
+        self.players = []
         self.skip_button = TextButton(85, 830, 125, 60, (255, 255, 0), "Skip")
         self.drawing_color = (0, 0, 0)
         self.chat = Chat(1050, 125)
@@ -68,10 +68,13 @@ class Game:
                     self.check_clicks()
                     self.bottom_bar.button_events()
 
+                if event.type == pygame.KEYDOWN:
+                    # gets the key name
+                    key_name = pygame.key.name(event.key)
+
+                    key_name = key_name.lower()
+                    self.chat.type(key_name)
+
         pygame.quit()
 
 
-if __name__ == "__main__":
-    pygame.font.init()
-    g = Game()
-    g.run()
