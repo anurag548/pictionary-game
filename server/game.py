@@ -20,7 +20,7 @@ class Game(object):
         self.round = None
         self.board = Board()
         self.player_draw_ind = 0
-        self.round_cnt = 1
+        self.round_count = 1
         self.start_new_round()
 
     def start_new_round(self):
@@ -31,7 +31,7 @@ class Game(object):
         try:
             round_word = self.get_word()
             self.round = Round(round_word, self.players[self.player_draw_ind], self)
-            self.round_cnt += 1
+            self.round_count += 1
 
             if self.player_draw_ind >= len(self.players):
                 self.round_ended()
@@ -100,7 +100,7 @@ class Game(object):
         if the round ends call start_new_round
         :return:
         """
-        self.round.chat.update_chat(f"Round {self.round.round_count} has ended.")
+        self.round.chat.update_chat(f"Round {self.round_count} has ended.")
         self.start_new_round()
         self.board.clear()
 

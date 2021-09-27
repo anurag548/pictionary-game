@@ -17,8 +17,8 @@ class Chat:
         self.ctype = pygame.font.SysFont("comicsans", 30)
         self.CHAT_GAP = 20
 
-    def update_chat(self, msg):
-        self.content.append(msg)
+    def update_chat(self):
+        self.content.append(self.typing)
 
     def draw(self, win):
         pygame.draw.rect(win, (200, 200, 200), (self.x, self.y + self.HEIGHT - 40, self.WIDTH, 40))

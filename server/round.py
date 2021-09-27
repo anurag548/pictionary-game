@@ -67,7 +67,7 @@ class Round(object):
         correct = wrd == self.word
         if correct:
             self.player_guessed.append(player)
-            self.round.chat.update_chat(f"{player.name} has guessed the word")
+            self.chat.update_chat(f"{player.name} has guessed the word")
             # TODO implement scoring system here
             return True
         self.chat.update_chat(f"{player.name} guessed {wrd}")

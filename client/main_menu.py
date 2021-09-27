@@ -1,7 +1,7 @@
 import pygame
 from network import Network
 from game import Game
-pygame.font.init()
+from player import Player
 
 
 class MainMenu:
@@ -44,9 +44,12 @@ class MainMenu:
                 response = self.n.send({-1: []})
                 print(response)
                 if response:
-                    pygame.quit()
                     run = False
-                    g = Game(self.n)
+                    g = Game(self.win, self.n)
+
+                    for player in response:
+                        p = Player(player)
+                        g.add_player(p)
                     g.run()
 
             for event in pygame.event.get():
@@ -58,14 +61,12 @@ class MainMenu:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         if len(self.name) > 1:
-                            run = False
                             self.waiting = True
                             self.n = Network(self.name)
 
                     else:
-                            # gets the key name
+                       # gets the key name
                         key_name = pygame.key.name(event.key)
-
                         key_name = key_name.lower()
                         self.type(key_name)
 
@@ -83,6 +84,7 @@ class MainMenu:
 
 
 if __name__ == "__main__":
+    pygame.font.init()
     main = MainMenu()
     main.run()
 

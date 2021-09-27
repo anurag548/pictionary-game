@@ -12,7 +12,7 @@ from network import Network
 class Game:
     BG = (255, 255, 255)
 
-    def __init__(self, win, connection = None):
+    def __init__(self, win, connection=None):
         pygame.font.init()
         self.connection = connection
         self.win = win
@@ -25,8 +25,10 @@ class Game:
         self.drawing_color = (0, 0, 0)
         self.chat = Chat(1050, 125)
         self.bottom_bar = BottomBar(305, 880, self)
-        for player in self.players:
-            self.leaderboard.add_player(player)
+
+    def add_player(self, player):
+        self.players.append(player)
+        self.leaderboard.add_player(player)
 
     def draw(self):
         self.win.fill(self.BG)
@@ -69,6 +71,8 @@ class Game:
                     self.bottom_bar.button_events()
 
                 if event.type == pygame.KEYDOWN:
+                    if event.type == pygame.K_RETURN:
+                        self.chat.update_chat()
                     # gets the key name
                     key_name = pygame.key.name(event.key)
 

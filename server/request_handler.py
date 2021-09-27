@@ -105,10 +105,10 @@ class Server(object):
         self.connection_queue.append(player)
         if len(self.connection_queue) >= self.PLAYERS:
             game = Game(self.game_id, self.connection_queue[:])
-            self.game_id += 1
 
             for p in self.connection_queue:
                 p.set_game(game)
+
             self.game_id += 1
             self.connection_queue = []
 
