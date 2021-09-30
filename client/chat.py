@@ -17,8 +17,8 @@ class Chat:
         self.ctype = pygame.font.SysFont("comicsans", 30)
         self.CHAT_GAP = 20
 
-    def update_chat(self):
-        self.content.append(self.typing)
+    def update_chat(self, content):
+        self.content = content
 
     def draw(self, win):
         pygame.draw.rect(win, (200, 200, 200), (self.x, self.y + self.HEIGHT - 40, self.WIDTH, 40))
@@ -39,8 +39,10 @@ class Chat:
         if char == "backspace":
             if len(self.typing) > 0:
                 self.typing = self.typing[:-1]
+
         elif char == "space":
                 self.typing += " "
+
         elif len(char) == 1:
             self.typing += char
 

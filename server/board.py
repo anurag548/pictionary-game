@@ -4,7 +4,7 @@ State of the board
 
 
 class Board(object):
-    ROWS = COLS = 720
+    ROWS = COLS = 90
 
     def __init__(self):
         """
@@ -20,7 +20,21 @@ class Board(object):
         :param color: (int,int,int)
         :return:
         """
-        self.data[y][x] = color
+        try:
+            ngB = [(x, y)] + self.get_neighbour(x, y)
+            for x, y in ngB:
+                if 0 <= x <= self.COLS and 0 <= y <= self.ROWS:
+                    self.data[y][x] = color
+        except IndexError:
+            pass
+
+    def get_neighbour(self, x, y):
+        # TODO change the number of associated pixels clicked if it looks too bad
+        return [
+            (x - 1, y - 1), (x, y - 1), (x + 1, y - 1),
+            (x - 1, y), (x + 1, y),
+            (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)
+        ]
 
     def clear(self):
         """

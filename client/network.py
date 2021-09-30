@@ -6,7 +6,7 @@ import time as t
 class Network:
     def __init__(self, name):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server = "localhost"
+        self.server = "172.105.63.92"
         self.port = 5556
         self.addr = (self.server, self.port)
         self.name = name
@@ -39,7 +39,6 @@ class Network:
             except:
                 pass
             keys = [key for key in data.keys()]
-            print(di)
             return json.loads(di)[str(keys[0])]
         except socket.error as e:
             self.disconnect(e)

@@ -19,20 +19,24 @@ class Round(object):
         self.word = word
         self.player_drawing = player_drawing
         self.player_guessed = []
+        self.player_skipped = []
         self.skips = 0
         self.player_scores = {player: 0 for player in self.game.players}
         self.time = 75
         self.chat = Chat(self)
         start_new_thread(self.time_thread, ())
 
-    def skip(self):
+    def skip(self, player):
         """
         Returns true if round is skipped threshold met
         :return: bool
         """
-        self.skips += 1
-        if self.skips > len(self.game.players)-2:
-            return True
+        if player not in self.player_skipped:
+            self.player_skipped.append(player)
+            self.skips += 1
+            self.chat.update_chat(f"Player has voted to skip({self.skips}/{len(self.game.players)-2}")
+            if self.skips >= len(self.game.players)-2:
+                return True
         return False
 
     def get_scores(self, player):

@@ -42,7 +42,6 @@ class MainMenu:
             self.draw()
             if self.waiting:
                 response = self.n.send({-1: []})
-                print(response)
                 if response:
                     run = False
                     g = Game(self.win, self.n)
@@ -65,7 +64,7 @@ class MainMenu:
                             self.n = Network(self.name)
 
                     else:
-                       # gets the key name
+                        # gets the key name
                         key_name = pygame.key.name(event.key)
                         key_name = key_name.lower()
                         self.type(key_name)

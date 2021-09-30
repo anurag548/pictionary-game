@@ -11,11 +11,12 @@ class TopBar(object):
         self.width = width
         self.height = height
         self.word = ""
-        self.round = 1
+        self.round = 0
         self.max_round = 8
         self.round_font = pygame.font.SysFont("comicsans", 50)
         self.BORDER_THICKNESS = 5
         self.time = 10
+        self.drawing = False
 
     def draw(self, win):
         pygame.draw.rect(win, (0, 0, 0), (self.x, self.y, self.width, self.height), self.BORDER_THICKNESS)
@@ -25,22 +26,26 @@ class TopBar(object):
         win.blit(txt, (self.x + 10, self.y + self.height/2 - txt.get_height()/2))
 
         # draw underscores
-        txt = self.round_font.render(TopBar.underscore_text(self.word), True, (0, 0, 0))
+        if self.drawing:
+            wrd = self.word
+        else:
+            wrd = TopBar.underscore_text(self.word)
+        txt = self.round_font.render(wrd, True, (0, 0, 0))
         win.blit(txt, (self.x + self.width/2 - txt.get_width()/2, self.y + self.height/2 - txt.get_height()/2 + 10))
         
         pygame.draw.circle(win, (0, 0, 0), (self.x+self.width-50, self.y+round(self.height/2)), 40, self.BORDER_THICKNESS)
         timer = self.round_font.render(str(self.time), 1, (0, 0, 0))
         win.blit(timer, (self.x+self.width-50 - round(timer.get_width()/2), self.y+self.height/2 - round(timer.get_width()/2)))
 
-    @staticmethod
+    #@staticmethod
     def underscore_text(text):
         new_str = ""
 
         for char in text:
             if char != " ":
-                new_str += " "
+                new_str += " _ "
             else:
-                new_str += " "
+                new_str += "   "
         return new_str
 
     def change_word(self, word):
